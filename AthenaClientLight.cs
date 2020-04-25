@@ -18,7 +18,7 @@ namespace AthenaDemo
                 QueryExecutionId = executionResult.QueryExecutionId
             };
 
-            var x = await Task.Run<GetQueryResultsResponse>(async () =>
+            return await Task.Run<GetQueryResultsResponse>(async () =>
               {
                   var start = DateTime.Now;
                   while (true)
@@ -30,7 +30,9 @@ namespace AthenaDemo
                           case var queued when queued == QueryExecutionState.QUEUED:
                           case var running when running == QueryExecutionState.RUNNING:
                               if ((DateTime.Now - start).Seconds > timeoutSeconds)
+                              {
                                   throw new AthenaQueryExecutionException($"query({response.QueryExecution.QueryExecutionId}) Timeout", response);
+                              }
                               continue;
                           case var cancelled when cancelled == QueryExecutionState.CANCELLED:
                               {
@@ -55,8 +57,6 @@ namespace AthenaDemo
                       }
                   }
               });
-
-            return x;
         }
     }
 }
