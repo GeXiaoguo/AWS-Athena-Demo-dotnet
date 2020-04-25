@@ -1,7 +1,7 @@
 
 # AWS Athena Demo in C#
 
-Assuming you know how AWS Athena works and have already setup your s3 buckets, and table schemas, User Access Key, and are able to query data from sql-workbench. The next step is to query data programmatically. This is a simple C# demo for how to query Athena databases with C#.
+Assuming you already setup AWS Athena and able to query data from sql-workbench. The next step is to query data programmatically. This is a simple demo of how to query AWS Athena data with C#.
 
 `QueryAsyncLight` is an extension function that helps with making the querying code simpler. Have a look at AthenaClientLight.cs if you want to look under the hood.
                 
