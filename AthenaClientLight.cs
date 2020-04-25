@@ -9,8 +9,6 @@ namespace AthenaDemo
     {
         public static async Task<GetQueryResultsResponse> QueryAsyncLight(this AmazonAthenaClient client, StartQueryExecutionRequest request, int timeoutSeconds)
         {
-            var taskSource = new TaskCompletionSource<GetQueryResultsResponse>();
-
             var executionResult = await client.StartQueryExecutionAsync(request);
 
             var queryExecutionRequest = new GetQueryExecutionRequest
