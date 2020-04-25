@@ -19,7 +19,7 @@ namespace AthenaDemo
             return await Task.Run<GetQueryResultsResponse>(async () =>
               {
                   var start = DateTime.Now;
-                  while (true)
+                  while ((DateTime.Now - start).Seconds < timeoutSeconds)
                   {
                       await Task.Delay(1000);
                       var response = await client.GetQueryExecutionAsync(queryExecutionRequest);
@@ -27,18 +27,14 @@ namespace AthenaDemo
                       {
                           case var queued when queued == QueryExecutionState.QUEUED:
                           case var running when running == QueryExecutionState.RUNNING:
-                              if ((DateTime.Now - start).Seconds > timeoutSeconds)
-                              {
-                                  throw new AthenaQueryExecutionException($"query({response.QueryExecution.QueryExecutionId}) Timeout", response);
-                              }
                               continue;
                           case var cancelled when cancelled == QueryExecutionState.CANCELLED:
                               {
-                                  throw new AthenaQueryExecutionException($"The query({response.QueryExecution.QueryExecutionId}) has been calceled", response);
+                                  throw new AthenaQueryExecutionException($"The query({executionResult.QueryExecutionId}) has been calceled", response);
                               }
                           case var failed when failed == QueryExecutionState.FAILED:
                               {
-                                  throw new AthenaQueryExecutionException($"The query({response.QueryExecution.QueryExecutionId}) failed", response);
+                                  throw new AthenaQueryExecutionException($"The query({executionResult.QueryExecutionId}) failed", response);
                               }
                           case var secceeded when secceeded == QueryExecutionState.SUCCEEDED:
                               {
@@ -54,6 +50,7 @@ namespace AthenaDemo
                               throw new AthenaQueryExecutionException($"Unrecognized query({response.QueryExecution.QueryExecutionId}) State", response);
                       }
                   }
+                  throw new AthenaQueryExecutionException($"query({executionResult.QueryExecutionId}) Timeout", null);
               });
         }
     }
